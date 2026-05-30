@@ -1,7 +1,3 @@
-# Configuracion local con la contrasena REAL de la base de datos.
-# Cada integrante crea su propio config.php a partir de config.example.php
-config/config.php
-
 # Borradores PHP viejos del Rol C (solo respaldo, no se usan)
 _respaldo_rolC_original/
 
