@@ -72,10 +72,14 @@ cd "C:\Users\Marleo\Desktop\Proyecto Introduccion\database"
 
 ## Paso 2 — Configurar la conexion
 
-Abre `config/config.php` y cambia **solo** esta linea por la contrasena de tu PostgreSQL:
+El archivo real `config/config.php` **no se sube a GitHub** (lleva la contrasena). Cada
+integrante crea el suyo:
+
+1. Copia `config/config.example.php` y renombralo a `config/config.php`.
+2. Abre `config/config.php` y cambia **solo** esta linea por la contrasena de tu PostgreSQL:
 
 ```php
-define('DB_PASS', 'CAMBIA_ESTA_CONTRASENA');
+define('DB_PASS', 'PON_AQUI_TU_CONTRASENA');
 ```
 
 Es el **unico** lugar donde se configura la conexion para todo el proyecto.
