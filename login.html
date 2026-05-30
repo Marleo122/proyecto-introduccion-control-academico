@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesion | Control Academico</title>
+    <link rel="stylesheet" href="estilos_sistema.css">
+</head>
+<body>
+    <div class="login-wrap">
+        <form class="login-card" id="formLogin" autocomplete="off">
+            <h1>Control Academico</h1>
+            <p class="sub">Universidad Mariano Galvez</p>
+
+            <div class="mensaje-error" id="error"></div>
+
+            <div class="campo">
+                <label for="usuario">Usuario o correo</label>
+                <input type="text" id="usuario" name="usuario" placeholder="admin" required>
+            </div>
+
+            <div class="campo">
+                <label for="password">Contrasena</label>
+                <input type="password" id="password" name="password" placeholder="********" required>
+            </div>
+
+            <button type="submit" class="btn-login" id="btnEntrar">Iniciar sesion</button>
+
+            <p class="ayuda">
+                Usuarios de prueba:<br>
+                <strong>admin / admin123</strong> (administrador)<br>
+                <strong>luis.perez / password123</strong> (estudiante)
+            </p>
+        </form>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

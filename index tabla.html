@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universidad Kevin Ova</title>
+    <link rel="stylesheet" type="text/css" href="csstabla.css">
+    <link rel="stylesheet" type="js" href="Style.css">
+    
+</head>
+<body style="background-color:#EEEEEE">
+    <nav class="menu" id="menu">
+        <div class="menu-contenedor">
+            <a href="index.html" class="logo">Universidad Kevin Ova</a>
+            <div class="menu-icono" id="menuIcono">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            	<ul class="nav-links" id="navLinks">
+            	<li><a href="index.html">Inicio</a></li>
+                <li><a href="index tabla.html">Iniciar sesión</a></li>
+                <li><a href="consulta.html">Consultas </a></li>
+                <li><a href="#">Asignaciones</a></li>
+            </ul>
+        </div>
+    </nav>
+    	   <script src="mi_script.js"></script>
+    <div class="contenido">
+        <div class="tarjeta">
+            <h1></h1>
+            <p>.</p>
+            <nav>
+       
+    </nav>
+     <script src="scripttabla.js"></script>
+    <div class="container">
+        <div class="card">
+            <h2> Lista de Estudiantes</h2>
+            <button action="base.php"class="btn btn-primary" onclick="mostrarFormularioAgregar()">+ Nuevo Estudiante</button>
+            
+            <div id="formularioAgregar" style="display:none; margin-top:15px;">
+                <h3>Agregar Estudiante</h3>
+                <input type="text" id="numIdentificacion" placeholder="Número identificación">
+                <input type="text" id="nombres" placeholder="Nombres">
+                <input type="text" id="apellidos" placeholder="Apellidos">
+                <input type="email" id="emailInstitucional" placeholder="Email institucional">
+                <input type="date" id="fechaNacimiento">
+                <select id="idPrograma">
+                    <option value="1">Ingeniería de Sistemas</option>
+                    <option value="2">Derecho</option>
+                    <option value="3">Medicina</option>
+                   
+                </select>
+                <input type="number" id="semestreActual" placeholder="Semestre actual" min="1" max="12">
+                <button class="btn btn-success" onclick="agregarEstudiante()">Guardar</button>
+                <button class="btn" onclick="ocultarFormulario()">Cancelar</button>
+            </div>
+            
+            <div id="mensaje"></div>
+            
+            <table id="tablaEstudiantes">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Identificación</th><th>Nombres</th><th>Apellidos</th>
+                        <th>Email</th><th>Programa</th><th>Semestre</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla">
+                    <tr><td colspan="8">Cargando estudiantes...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+        </div>
+
+        
+
+    <div class="scroll-indicador" id="scrollIndicador">
+       
+    </div>
+ 
+    
+</body>
+</html>
+S

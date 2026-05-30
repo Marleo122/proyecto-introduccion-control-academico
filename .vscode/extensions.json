@@ -1,0 +1,11 @@
+{
+    // Extensiones recomendadas para trabajar este proyecto en VS Code.
+    // VS Code te ofrecera instalarlas al abrir la carpeta.
+    "recommendations": [
+        "bmewburn.vscode-intelephense-client",   // PHP: autocompletado e inteligencia
+        "xdebug.php-debug",                       // PHP: depuracion
+        "ckolkman.vscode-postgres",               // PostgreSQL: conectarse y consultar
+        "ritwickdey.liveserver",                  // (opcional) servir HTML estatico
+        "ms-vscode.live-server"
+    ]
+}

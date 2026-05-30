@@ -1,0 +1,13 @@
+{
+    // Asocia los archivos del proyecto correctamente
+    "files.associations": {
+        "*.php": "php"
+    },
+    "files.eol": "\n",
+    // Si instalas PHP en una ruta fija, descomenta y ajusta la siguiente linea
+    // para que Intelephense encuentre el ejecutable:
+    // "php.validate.executablePath": "C:\\php\\php.exe"
+    "[sql]": {
+        "editor.tabSize": 4
+    }
+}

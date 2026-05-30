@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universidad Kevin Ova</title>
+    <link rel="stylesheet" type="text/css" href="constyle.css">
+    <link rel="stylesheet" type="js" href="Style.css">
+    
+</head>
+<body style="background-color:#EEEEEE">
+    <nav class="menu" id="menu">
+        <div class="menu-contenedor">
+            <a href="index.html" class="logo">Universidad Kevin Ova</a>
+            <div class="menu-icono" id="menuIcono">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            	<ul class="nav-links" id="navLinks">
+            	<li><a href="index.html">Inicio</a></li>
+                <li><a href="index tabla.html">Iniciar sesión</a></li>
+                <li><a href="#">Consultas </a></li>
+                <li><a href="#">Asignaciones</a></li>
+            </ul>
+        </div>
+
+    
+    </nav>
+    	   <script src="scriptconsulta.js"></script>
+    <div class="container">
+        <header>
+            <h1> Programas Académicos</h1>
+            <p>Consulta y Asignaciones</p>
+        </header>
+        
+        <div class="content">
+            <button class="btn-recargar" onclick="cargarProgramas()"> Recargar datos</button>
+            
+            <div id="contenido">
+                <div class="loading">Cargando programas desde la base de datos...</div>
+            </div>
+        </div>
+        
+        <footer>
+            Sistema de Gestión Universitaria | Datos en tiempo real desde PostgreSQL
+        </footer>
+    </div>
+        </div>
+
+        
+
+    <div class="scroll-indicador" id="scrollIndicador">
+       
+    </div>
+ 
+    
+</body>
+</html>
+S

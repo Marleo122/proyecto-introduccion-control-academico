@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del estudiante | Control Academico</title>
+    <link rel="stylesheet" href="estilos_sistema.css">
+</head>
+<body data-rol="estudiante">
+
+    <div class="topbar">
+        <span class="marca">Control Academico &middot; Estudiante</span>
+        <div>
+            <span class="usuario" id="nombreUsuario">...</span>
+            <button class="btn-salir" onclick="cerrarSesion()">Cerrar sesion</button>
+        </div>
+    </div>
+
+    <div class="contenido-panel">
+
+        <div class="modulo">
+            <h2>Bienvenido</h2>
+            <p>Desde aqui el estudiante consulta su informacion academica. Los modulos
+               de abajo son los puntos donde el <strong>Rol E</strong> conectara sus pantallas.</p>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ROL E - Academico (lo que usa el estudiante)                  -->
+        <!-- ============================================================ -->
+        <div class="modulo">
+            <h2>Inscripcion de cursos <span class="etiqueta-rol">ROL E</span></h2>
+            <p>El estudiante elige los cursos del ciclo. Procedimiento disponible en la BD:
+               <code>inscribir_estudiante(identificacion, codigo_materia, periodo)</code>.</p>
+            <div class="placeholder">Espacio reservado para el Rol E.</div>
+        </div>
+
+        <div class="modulo">
+            <h2>Historial academico <span class="etiqueta-rol">ROL E</span></h2>
+            <p>Notas y estado de cada materia. Vista disponible:
+               <code>vista_historial_academico</code>. Promedio:
+               <code>calcular_promedio(identificacion)</code>.</p>
+            <div class="placeholder">Espacio reservado para el Rol E.</div>
+        </div>
+
+    </div>
+
+    <script src="js/panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de administrador | Control Academico</title>
+    <link rel="stylesheet" href="estilos_sistema.css">
+</head>
+<body data-rol="admin">
+
+    <div class="topbar">
+        <span class="marca">Control Academico &middot; Administrador</span>
+        <div>
+            <span class="usuario" id="nombreUsuario">...</span>
+            <button class="btn-salir" onclick="cerrarSesion()">Cerrar sesion</button>
+        </div>
+    </div>
+
+    <div class="contenido-panel">
+
+        <div class="modulo">
+            <h2>Bienvenido al panel de administracion</h2>
+            <p>Desde aqui el administrador gestiona los datos del sistema. Los modulos
+               de abajo son los puntos donde el <strong>Rol D</strong> y el <strong>Rol E</strong>
+               conectaran sus pantallas.</p>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ROL D - Modulos CRUD (gestion de datos)                       -->
+        <!-- El backend ya existe en backend/estudiantes.php y             -->
+        <!-- backend/listar_programas.php. Monta aqui las pantallas.       -->
+        <!-- ============================================================ -->
+        <div class="modulo">
+            <h2>Gestion de datos <span class="etiqueta-rol">ROL D</span></h2>
+            <p>CRUD de Estudiantes, Cursos, Docentes y Asignaciones.</p>
+            <div class="placeholder">
+                Espacio reservado para el Rol D.<br>
+                Endpoints listos: <code>backend/estudiantes.php</code> (listar / agregar / actualizar / eliminar),
+                <code>backend/listar_programas.php</code>.<br>
+                Ya existe una tabla de estudiantes funcional en <code>index tabla.html</code> que puedes integrar aqui.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ROL E - Reportes (el admin tambien puede ver reportes)        -->
+        <!-- ============================================================ -->
+        <div class="modulo">
+            <h2>Reportes academicos <span class="etiqueta-rol">ROL E</span></h2>
+            <p>Reportes exportables (constancias, listados, promedios). Vistas disponibles
+               en la BD: <code>vista_promedios</code>, <code>vista_historial_academico</code>,
+               <code>vista_cursos_por_docente</code>.</p>
+            <div class="placeholder">Espacio reservado para el Rol E.</div>
+        </div>
+
+    </div>
+
+    <script src="js/panel.js"></script>
+</body>
+</html>

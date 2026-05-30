@@ -1,0 +1,18 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            // Levanta el servidor PHP integrado en http://localhost:8000
+            // Requiere tener PHP instalado y en el PATH (ver README).
+            // Ejecutar con:  Terminal > Run Task... > Servidor PHP
+            "label": "Servidor PHP (localhost:8000)",
+            "type": "shell",
+            "command": "php",
+            "args": ["-S", "localhost:8000"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "dedicated" }
+        }
+    ]
+}
