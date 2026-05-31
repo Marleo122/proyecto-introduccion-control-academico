@@ -141,8 +141,14 @@ php -m | findstr pdo_pgsql
 | `daniela.rosales`   | `password123`      | estudiante    |
 | `andres.cordon`     | `password123`      | estudiante    |
 
+**Docentes** (todos con contrasena `profesor123`): `ana.gomez`, `carlos.lopez`,
+`maria.castillo`, `diana.mejia`, `roberto.sanchez`, `laura.herrera`.
+
 > Tambien puedes entrar usando el correo en vez del usuario (ej: `admin@universidad.edu`).
-> El administrador entra al `panel_admin.html` y el estudiante al `panel_estudiante.html`.
+> Cada rol entra a su panel: admin -> `panel_admin.html`, docente -> `panel_profesor.html`,
+> estudiante -> `panel_estudiante.html`.
+>
+> La lista completa de credenciales y comandos utiles esta en `CREDENCIALES_Y_COMANDOS.txt`.
 
 ---
 

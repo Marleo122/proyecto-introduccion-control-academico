@@ -7,8 +7,15 @@
  * Uso en cada panel:  <body data-rol="admin">  o  data-rol="estudiante"
  * ========================================================================== */
 
+// Devuelve el panel que le corresponde a cada rol
+function panelDeRol(rol) {
+    if (rol === 'admin')    return 'panel_admin.html';
+    if (rol === 'profesor') return 'panel_profesor.html';
+    return 'panel_estudiante.html';
+}
+
 (async function protegerPanel() {
-    const rolRequerido = document.body.dataset.rol;   // 'admin' o 'estudiante'
+    const rolRequerido = document.body.dataset.rol;   // 'admin', 'profesor' o 'estudiante'
 
     try {
         const resp = await fetch('backend/sesion_actual.php');
@@ -21,8 +28,7 @@
 
         // Si el rol no corresponde a este panel, mandar al panel correcto
         if (rolRequerido && r.usuario.rol !== rolRequerido) {
-            window.location.href = (r.usuario.rol === 'admin')
-                ? 'panel_admin.html' : 'panel_estudiante.html';
+            window.location.href = panelDeRol(r.usuario.rol);
             return;
         }
 

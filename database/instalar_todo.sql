@@ -30,7 +30,10 @@
 \echo '== 6/7  Creando trigger =='
 \i 06_trigger.sql
 
-\echo '== 7/7  Creando usuarios del login (Rol C) =='
+\echo '== 7/8  Creando usuarios del login (Rol C) =='
 \i 07_usuarios.sql
+
+\echo '== 8/8  Creando usuarios de profesores (Rol C) =='
+\i 08_usuarios_profesores.sql
 
 \echo '== LISTO: base de datos PlataformaEstudiantes instalada por completo =='

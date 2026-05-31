@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del docente | Control Academico</title>
+    <link rel="stylesheet" href="estilos_sistema.css">
+    <style>
+        .nav-modulos { display:flex; gap:8px; flex-wrap:wrap; background:#fff;
+            padding:16px 22px; border-radius:12px; margin-bottom:20px; box-shadow:0 4px 14px rgba(0,0,0,.06); }
+        .nav-btn { padding:9px 18px; border:2px solid #1e3c72; border-radius:8px; background:#fff;
+            color:#1e3c72; cursor:pointer; font-weight:700; font-size:.88rem; transition:all .18s; }
+        .nav-btn:hover { background:#eef1f6; }
+        .nav-btn.activo { background:#1e3c72; color:#fff; }
+
+        .seccion { display:none; }
+        .seccion.visible { display:block; }
+
+        .tabla-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:.91rem; }
+        th { background:#1e3c72; color:#fff; padding:11px 12px; text-align:left; white-space:nowrap; }
+        td { padding:9px 12px; border-bottom:1px solid #e5e7eb; }
+        tr:hover td { background:#f0f4ff; }
+
+        .badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:.78rem; font-weight:700; }
+        .b-verde { background:#d1fae5; color:#065f46; }
+        .b-rojo  { background:#fee2e2; color:#991b1b; }
+        .b-azul  { background:#dbeafe; color:#1e40af; }
+        .b-gris  { background:#f3f4f6; color:#374151; }
+
+        .btn-accion { padding:5px 12px; border:none; border-radius:6px; cursor:pointer; font-size:.8rem; font-weight:700; }
+        .btn-nota { background:#dbeafe; color:#1e40af; }
+
+        .barra { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+        .barra input, .barra select { padding:8px 12px; border:1.5px solid #d1d5db; border-radius:8px; font-size:.88rem; }
+        .btn-buscar { padding:9px 20px; background:#1e3c72; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:700; }
+
+        .msg-ok { color:#065f46; background:#d1fae5; padding:10px 16px; border-radius:8px; margin:8px 0; display:none; }
+        .msg-err { color:#991b1b; background:#fee2e2; padding:10px 16px; border-radius:8px; margin:8px 0; display:none; }
+        .spin { color:#9ca3af; font-style:italic; margin:10px 0; display:none; }
+        .sin-datos { color:#9ca3af; text-align:center; padding:28px; }
+
+        .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:999; align-items:center; justify-content:center; }
+        .overlay.abierto { display:flex; }
+        .modal { background:#fff; border-radius:14px; padding:28px; width:95%; max-width:460px; box-shadow:0 20px 60px rgba(0,0,0,.25); }
+        .modal h3 { margin-bottom:16px; color:#1e3c72; }
+        .campo-modal { margin-bottom:14px; }
+        .campo-modal label { display:block; font-size:.85rem; font-weight:600; margin-bottom:5px; }
+        .campo-modal input { width:100%; padding:9px 12px; border:1.5px solid #d1d5db; border-radius:8px; font-size:.9rem; }
+        .modal-btns { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
+        .btn-cancelar { padding:9px 20px; background:#f3f4f6; border:none; border-radius:8px; cursor:pointer; font-weight:700; }
+        .btn-guardar { padding:9px 22px; background:#1e3c72; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:700; }
+    </style>
+</head>
+<body data-rol="profesor">
+
+    <div class="topbar">
+        <span class="marca">Control Academico &middot; Docente</span>
+        <div>
+            <span class="usuario" id="nombreUsuario">...</span>
+            <button class="btn-salir" onclick="cerrarSesion()">Cerrar sesion</button>
+        </div>
+    </div>
+
+    <div class="contenido-panel">
+
+        <nav class="nav-modulos">
+            <strong style="align-self:center;color:#6b7280;font-size:.82rem;">DOCENTE:</strong>
+            <button class="nav-btn activo" onclick="irA('notas',this)">Ingreso de notas</button>
+            <button class="nav-btn" onclick="irA('buscador',this)">Buscador academico</button>
+        </nav>
+
+        <!-- INGRESO DE NOTAS -->
+        <div class="modulo seccion visible" id="seccion-notas">
+            <h2>Ingreso de Notas</h2>
+            <div class="barra">
+                <label>Periodo:
+                    <select id="periodoNotas" onchange="cargarMatriculas()">
+                        <option value="2025-1">2025-1</option>
+                        <option value="2025-2" selected>2025-2</option>
+                        <option value="2026-1">2026-1</option>
+                    </select>
+                </label>
+                <input id="filtroNotas" placeholder="Buscar estudiante o materia..." oninput="filtrarTabla('tbNotas',this.value)" style="width:240px">
+            </div>
+            <div class="msg-ok" id="okNotas"></div>
+            <div class="msg-err" id="errNotas"></div>
+            <div class="spin" id="spinNotas">Cargando matriculas...</div>
+            <div class="tabla-wrap">
+                <table><thead><tr>
+                    <th>Identificacion</th><th>Estudiante</th><th>Materia</th>
+                    <th>Nota actual</th><th>Estado</th><th>Accion</th>
+                </tr></thead>
+                <tbody id="tbNotas"><tr><td colspan="6" class="sin-datos">Selecciona un periodo.</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="modulo seccion" id="seccion-buscador">
+            <h2>Buscador Academico</h2>
+            <div class="barra">
+                <select id="fPrograma" style="width:200px"><option value="">Todos los programas</option></select>
+                <input id="fMateria" placeholder="Materia o codigo..." style="width:170px">
+                <input id="fNotaMin" placeholder="Nota min" type="number" min="0" max="5" step="0.1" style="width:90px">
+                <input id="fNotaMax" placeholder="Nota max" type="number" min="0" max="5" step="0.1" style="width:90px">
+                <select id="fEstado">
+                    <option value="">Todos los estados</option>
+                    <option value="Cursando">Cursando</option>
+                    <option value="Aprobada">Aprobada</option>
+                    <option value="Reprobada">Reprobada</option>
+                </select>
+                <button class="btn-buscar" onclick="ejecutarBusqueda()">Buscar</button>
+            </div>
+            <p id="totalBusqueda" style="color:#6b7280;font-size:.85rem;margin-bottom:10px;"></p>
+            <div class="tabla-wrap">
+                <table><thead><tr>
+                    <th>Estudiante</th><th>Materia</th><th>Programa</th>
+                    <th>Periodo</th><th>Nota</th><th>Estado</th><th>Docente</th>
+                </tr></thead>
+                <tbody id="tbBuscador"><tr><td colspan="7" class="sin-datos">Usa los filtros y presiona Buscar.</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Nota -->
+    <div class="overlay" id="modalNota">
+        <div class="modal">
+            <h3>Ingresar Nota</h3>
+            <input type="hidden" id="notaIdMatricula">
+            <p id="notaDescripcion" style="color:#6b7280;margin-bottom:14px;font-size:.9rem;"></p>
+            <div class="campo-modal">
+                <label>Nota final (0.00 - 5.00)</label>
+                <input id="notaValor" type="number" min="0" max="5" step="0.01" placeholder="Ej: 3.75">
+            </div>
+            <p style="font-size:.82rem;color:#9ca3af;">&ge; 3.00 = Aprobada &nbsp;|&nbsp; &lt; 3.00 = Reprobada</p>
+            <div class="modal-btns">
+                <button class="btn-cancelar" onclick="cerrarModal('modalNota')">Cancelar</button>
+                <button class="btn-guardar" onclick="guardarNota()">Guardar nota</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/panel.js"></script>
+    <script>
+    // ===================== DOCENTE: notas + buscador =====================
+
+    function irA(id, btn) {
+        document.querySelectorAll('.seccion').forEach(s => s.classList.remove('visible'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
+        document.getElementById('seccion-' + id).classList.add('visible');
+        btn.classList.add('activo');
+        if (id === 'notas')    cargarMatriculas();
+        if (id === 'buscador') iniciarBuscador();
+    }
+
+    function filtrarTabla(tbId, texto) {
+        const t = texto.toLowerCase();
+        document.querySelectorAll('#' + tbId + ' tr').forEach(tr => {
+            tr.style.display = tr.textContent.toLowerCase().includes(t) ? '' : 'none';
+        });
+    }
+
+    function abrirModal(id)  { document.getElementById(id).classList.add('abierto'); }
+    function cerrarModal(id) { document.getElementById(id).classList.remove('abierto'); }
+
+    // ---------- Ingreso de notas ----------
+    async function cargarMatriculas() {
+        spin('spinNotas'); limpiar('tbNotas', 6);
+        const periodo = document.getElementById('periodoNotas').value;
+        const data = await api(`backend/academico.php?accion=listar_matriculas&periodo=${periodo}`);
+        sinSpin('spinNotas');
+        if (!data) return;
+        document.getElementById('tbNotas').innerHTML = data.map(m => {
+            const nota  = m.nota_final !== null ? parseFloat(m.nota_final).toFixed(2) : '—';
+            const badge = badgeEstado(m.estado_matricula);
+            return `<tr>
+                <td>${m.numero_identificacion}</td>
+                <td>${m.estudiante}</td>
+                <td>${m.codigo_materia} — ${m.nombre_materia}</td>
+                <td><strong>${nota}</strong></td>
+                <td><span class="badge ${badge.cls}">${badge.txt}</span></td>
+                <td><button class="btn-accion btn-nota"
+                    onclick="abrirModalNota(${m.id_matricula},'${m.estudiante.replace(/'/g,"\\'")}','${m.nombre_materia.replace(/'/g,"\\'")}',${m.nota_final ?? 'null'})">
+                    Ingresar nota</button></td>
+            </tr>`;
+        }).join('') || `<tr><td colspan="6" class="sin-datos">No hay matriculas en este periodo.</td></tr>`;
+    }
+
+    function abrirModalNota(id, estudiante, materia, notaActual) {
+        document.getElementById('notaIdMatricula').value = id;
+        document.getElementById('notaDescripcion').textContent = `${estudiante} — ${materia}`;
+        document.getElementById('notaValor').value = notaActual !== null ? notaActual : '';
+        abrirModal('modalNota');
+    }
+
+    async function guardarNota() {
+        const res = await apiPost('backend/academico.php?accion=ingresar_nota', {
+            id_matricula: document.getElementById('notaIdMatricula').value,
+            nota_final:   document.getElementById('notaValor').value,
+        });
+        if (res?.exito) { cerrarModal('modalNota'); mostrar('okNotas', `Nota guardada. Estado: ${res.estado}`); cargarMatriculas(); }
+        else mostrar('errNotas', res?.error || 'Error al guardar nota.');
+    }
+
+    // ---------- Buscador ----------
+    async function iniciarBuscador() {
+        const data = await api('backend/academico.php?accion=listar_programas_bd');
+        if (data) {
+            document.getElementById('fPrograma').innerHTML = '<option value="">Todos los programas</option>' +
+                data.map(p => `<option value="${p.id_programa}">${p.nombre_programa}</option>`).join('');
+        }
+    }
+
+    async function ejecutarBusqueda() {
+        const params = new URLSearchParams({
+            accion:   'buscar',
+            programa: document.getElementById('fPrograma').value,
+            materia:  document.getElementById('fMateria').value,
+            nota_min: document.getElementById('fNotaMin').value,
+            nota_max: document.getElementById('fNotaMax').value,
+            estado:   document.getElementById('fEstado').value,
+        });
+        const data = await api('backend/academico.php?' + params);
+        if (!data) return;
+        document.getElementById('totalBusqueda').textContent = `Se encontraron ${data.length} registros.`;
+        document.getElementById('tbBuscador').innerHTML = data.length ? data.map(r => {
+            const badge = badgeEstado(r.estado_matricula);
+            const nota  = r.nota_final !== null ? parseFloat(r.nota_final).toFixed(2) : '—';
+            return `<tr>
+                <td>${r.estudiante}</td>
+                <td>${r.codigo_materia} — ${r.nombre_materia}</td>
+                <td>${r.nombre_programa}</td>
+                <td>${r.periodo_academico}</td>
+                <td><strong>${nota}</strong></td>
+                <td><span class="badge ${badge.cls}">${badge.txt}</span></td>
+                <td>${r.docente}</td>
+            </tr>`;
+        }).join('') : `<tr><td colspan="7" class="sin-datos">No se encontraron resultados.</td></tr>`;
+    }
+
+    // ---------- Helpers ----------
+    async function api(url, method = 'GET') {
+        try { const r = await fetch(url, { method }); return await r.json(); } catch(e) { return null; }
+    }
+    async function apiPost(url, data) {
+        try {
+            const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+            return await r.json();
+        } catch(e) { return null; }
+    }
+    function spin(id)    { document.getElementById(id).style.display = 'block'; }
+    function sinSpin(id) { document.getElementById(id).style.display = 'none'; }
+    function limpiar(id, cols) { document.getElementById(id).innerHTML = `<tr><td colspan="${cols}" class="sin-datos">Cargando...</td></tr>`; }
+    function mostrar(id, texto) {
+        const el = document.getElementById(id);
+        el.textContent = texto; el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 4000);
+    }
+    function badgeEstado(e) {
+        const m = { Aprobada:{cls:'b-verde',txt:'Aprobada'}, Reprobada:{cls:'b-rojo',txt:'Reprobada'},
+                    Cursando:{cls:'b-azul',txt:'Cursando'}, Cancelada:{cls:'b-gris',txt:'Cancelada'} };
+        return m[e] || { cls:'b-gris', txt:e };
+    }
+
+    cargarMatriculas();
+    </script>
+</body>
+</html>

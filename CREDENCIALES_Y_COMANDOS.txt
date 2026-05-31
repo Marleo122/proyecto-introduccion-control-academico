@@ -1,0 +1,167 @@
+============================================================================
+  SISTEMA DE CONTROL ACADEMICO - CHULETA (credenciales y comandos)
+  Universidad Mariano Galvez  |  PostgreSQL 18 + PHP 8.4
+============================================================================
+
+
+############################################################################
+#  1. ARRANCAR EL PROYECTO
+############################################################################
+
+- Doble clic en:  iniciar_servidor.bat
+- Luego abre en el navegador:  http://localhost:8000/login.html
+- Para apagarlo: cierra la ventana negra.
+
+(La base de datos PostgreSQL corre sola como servicio de Windows.)
+
+
+############################################################################
+#  2. USUARIOS Y CONTRASENAS DEL SISTEMA (para iniciar sesion en la web)
+############################################################################
+
+--- ADMINISTRADORES -------------------------------------------------------
+  Usuario: admin       Contrasena: admin123          -> Panel admin
+  Usuario: admin2      Contrasena: micontrasena123    -> Panel admin
+
+--- ESTUDIANTES (todos usan la contrasena: password123) -------------------
+  luis.perez            password123
+  andrea.martinez       password123
+  carlos.ramirez        password123
+  maria.hernandez       password123
+  diego.torres          password123
+  gabriela.morales      password123
+  jose.castro           password123
+  valeria.jimenez       password123
+  fernando.vasquez      password123
+  lucia.guerrero        password123
+  ricardo.mendizabal    password123
+  paola.estrada         password123
+  sergio.ortiz          password123
+  daniela.rosales       password123
+  andres.cordon         password123
+
+--- DOCENTES / PROFESORES (todos usan la contrasena: profesor123) ---------
+  ana.gomez             profesor123
+  carlos.lopez          profesor123
+  maria.castillo        profesor123
+  diana.mejia           profesor123
+  roberto.sanchez       profesor123
+  laura.herrera         profesor123
+
+NOTA: tambien se puede entrar usando el correo en vez del usuario.
+      Ej: admin@universidad.edu / admin123
+
+
+############################################################################
+#  3. CONTRASENA DE LA BASE DE DATOS (PostgreSQL)
+############################################################################
+
+  Usuario de PostgreSQL: postgres
+  Contrasena:            admin00
+  Base de datos:         PlataformaEstudiantes
+  Host / Puerto:         localhost / 5432
+
+(Esto se configura en el archivo:  config/config.php)
+
+
+############################################################################
+#  4. CONECTARSE A LA BASE DESDE LA TERMINAL (psql)
+############################################################################
+
+  Abrir psql conectado a la base:
+
+  "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d PlataformaEstudiantes
+
+  (te pide la contrasena: admin00)
+
+  Comandos utiles DENTRO de psql:
+    \dt            ->  ver todas las tablas
+    \dv            ->  ver todas las vistas
+    \df            ->  ver las funciones/procedimientos
+    \d usuarios    ->  ver la estructura de la tabla usuarios
+    \q             ->  salir
+
+
+############################################################################
+#  5. CONSULTAS UTILES (copiar y pegar en psql)
+############################################################################
+
+-- Ver todos los usuarios del sistema con su rol:
+SELECT u.nombre_usuario, u.nombre_completo, r.nombre_rol
+FROM usuarios u JOIN roles r ON u.id_rol = r.id_rol
+ORDER BY r.nombre_rol, u.nombre_usuario;
+
+-- Promedio de cada estudiante (vista del Rol B):
+SELECT * FROM vista_promedios ORDER BY promedio DESC;
+
+-- Historial academico completo:
+SELECT * FROM vista_historial_academico ORDER BY nombres, periodo_academico;
+
+-- Que materias imparte cada docente:
+SELECT * FROM vista_cursos_por_docente ORDER BY apellidos;
+
+-- Promedio de un estudiante por su identificacion (procedimiento Rol B):
+SELECT calcular_promedio('2001');
+
+-- Cuantas materias ha aprobado un estudiante:
+SELECT contar_aprobadas('2001');
+
+-- Inscribir un estudiante en una materia (procedimiento Rol B):
+SELECT inscribir_estudiante('2003', 'SIS-103', '2025-2');
+
+-- Listar estudiantes con su programa:
+SELECT e.numero_identificacion, e.nombres, e.apellidos, p.nombre_programa, e.semestre_actual
+FROM estudiantes e JOIN programas p ON e.id_programa = p.id_programa
+ORDER BY e.apellidos;
+
+-- Listar materias (cursos) por programa:
+SELECT m.codigo_materia, m.nombre_materia, p.nombre_programa, m.creditos
+FROM materias m JOIN programas p ON m.id_programa = p.id_programa
+ORDER BY p.nombre_programa, m.semestre_recomendado;
+
+-- Ver los ultimos intentos de inicio de sesion (registro de seguridad):
+SELECT nombre_usuario, ip_address, fue_exitoso, fecha_intento
+FROM intentoslogin ORDER BY fecha_intento DESC LIMIT 20;
+
+-- Cambiar la nota de una matricula (el trigger ajusta el estado solo):
+-- UPDATE matriculas SET nota_final = 4.5 WHERE id_matricula = 1;
+
+
+############################################################################
+#  6. REINSTALAR / RESETEAR LA BASE DE DATOS COMPLETA
+############################################################################
+
+  Opcion facil:  doble clic en  database\instalar_bd.bat
+
+  Opcion manual (PowerShell), parado en la carpeta database:
+    & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d PlataformaEstudiantes -f instalar_todo.sql
+
+  Borrar y volver a crear la base desde cero:
+    & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -c "DROP DATABASE IF EXISTS \"PlataformaEstudiantes\";"
+    & "C:\Program Files\PostgreSQL\18\bin\createdb.exe" -U postgres PlataformaEstudiantes
+    (luego correr instalar_todo.sql)
+
+
+############################################################################
+#  7. BACKUP Y RESTAURACION DE LA BASE
+############################################################################
+
+  Hacer copia de seguridad (genera un archivo .sql):
+    & "C:\Program Files\PostgreSQL\18\bin\pg_dump.exe" -U postgres PlataformaEstudiantes > backup_plataforma.sql
+
+  Restaurar desde una copia:
+    & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d PlataformaEstudiantes -f backup_plataforma.sql
+
+
+############################################################################
+#  8. SUBIR CAMBIOS A GITHUB
+############################################################################
+
+  Repositorio: https://github.com/Marleo122/proyecto-introduccion-control-academico
+
+  Parado en la carpeta del proyecto:
+    git add -A
+    git commit -m "describe el cambio"
+    git push
+
+============================================================================

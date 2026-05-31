@@ -82,8 +82,15 @@ $pdo->prepare("UPDATE usuarios SET ultimo_login = CURRENT_TIMESTAMP WHERE id_usu
     ->execute([':id' => $fila['id_usuario']]);
 $registrarIntento(true);
 
+/* Panel destino segun el rol */
+$paneles = [
+    'admin'      => 'panel_admin.html',
+    'profesor'   => 'panel_profesor.html',
+    'estudiante' => 'panel_estudiante.html',
+];
+
 echo json_encode([
     'success' => true,
     'usuario' => $_SESSION['usuario'],
-    'redirigir' => ($fila['nombre_rol'] === 'admin') ? 'panel_admin.html' : 'panel_estudiante.html',
+    'redirigir' => $paneles[$fila['nombre_rol']] ?? 'panel_estudiante.html',
 ]);
