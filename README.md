@@ -2,9 +2,8 @@
 
 Universidad Mariano Galvez de Guatemala · Ingenieria en Sistemas · Introduccion a los Sistemas de Computo
 
-Proyecto **unificado**: junta el trabajo de la base de datos (Rol A + Rol B) con el
-modulo de login y seguridad (Rol C), y deja todo listo para que el **Rol D** (CRUD) y
-el **Rol E** (academico y reportes) agreguen sus pantallas.
+Proyecto **unificado y completo** con los cinco roles: base de datos (Rol A + Rol B),
+login y seguridad (Rol C), modulos CRUD (Rol D) y academico + reportes (Rol E).
 
 - **Base de datos:** PostgreSQL 18 — base `PlataformaEstudiantes`
 - **Backend:** PHP (PDO)
@@ -34,8 +33,10 @@ Proyecto Introduccion/
 │   ├── login.php               (Rol C) iniciar sesion
 │   ├── logout.php              (Rol C) cerrar sesion
 │   ├── sesion_actual.php       (Rol C) saber quien esta logueado
-│   ├── estudiantes.php         (base para Rol D) CRUD de estudiantes
-│   └── listar_programas.php    (base para Rol D/E) consulta de programas
+│   ├── estudiantes.php         (Rol D) CRUD de estudiantes
+│   ├── crud.php                (Rol D) CRUD de cursos, docentes y asignaciones
+│   ├── academico.php           (Rol E) inscripcion, notas, historial, buscador, reportes
+│   └── listar_programas.php    (Rol D/E) consulta de programas
 ├── login.html                ← pantalla de inicio de sesion (Rol C)
 ├── panel_admin.html          ← panel del administrador (huecos para Rol D y E)
 ├── panel_estudiante.html     ← panel del estudiante (huecos para Rol E)
@@ -145,20 +146,19 @@ php -m | findstr pdo_pgsql
 
 ---
 
-## Para el Rol D (CRUD) y el Rol E (Academico y Reportes)
+## Modulos por rol (ya integrados)
 
-Todo queda "enchufable":
-
-- **Rol D:** ya tienes `backend/estudiantes.php` (listar / agregar / actualizar / eliminar)
-  y `backend/listar_programas.php`. Crea los endpoints equivalentes para cursos, docentes y
-  asignaciones siguiendo el mismo patron, y monta las pantallas dentro del bloque
-  marcado `ROL D` en `panel_admin.html`.
-- **Rol E:** apoyate en las vistas y procedimientos del Rol B (`vista_promedios`,
-  `vista_historial_academico`, `vista_cursos_por_docente`, `calcular_promedio()`,
-  `inscribir_estudiante()`) y monta las pantallas en los bloques `ROL E` de los paneles.
-- **Seguridad lista:** protege cualquier endpoint nuevo con `requerirLogin()` o
-  `requerirRol('admin')` (ver `backend/auth.php`). En el frontend, `window.USUARIO`
-  trae los datos del usuario logueado dentro de los paneles.
+- **Rol D (CRUD) — en `panel_admin.html`:** gestion completa de Estudiantes, Cursos,
+  Docentes y Asignaciones (crear, editar, eliminar con validaciones). Backend:
+  `backend/estudiantes.php` y `backend/crud.php`.
+- **Rol E (Academico y Reportes):**
+  - En `panel_admin.html`: ingreso de notas, buscador con filtros combinables y reportes
+    exportables a CSV.
+  - En `panel_estudiante.html`: inscripcion de cursos, historial academico y promedio.
+  - Backend: `backend/academico.php` (usa las vistas y procedimientos del Rol B).
+- **Seguridad:** todos los endpoints estan protegidos con `requerirLogin()` /
+  `requerirRol('admin', 'profesor')` (ver `backend/auth.php`). En el frontend,
+  `window.USUARIO` trae los datos del usuario logueado.
 
 ---
 

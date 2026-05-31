@@ -5,6 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de administrador | Control Academico</title>
     <link rel="stylesheet" href="estilos_sistema.css">
+    <style>
+        /* ===== ESTILOS ROL D y E ===== */
+        .nav-modulos {
+            display: flex; gap: 8px; flex-wrap: wrap;
+            background: #fff; padding: 16px 22px;
+            border-radius: 12px; margin-bottom: 20px;
+            box-shadow: 0 4px 14px rgba(0,0,0,.06);
+        }
+        .nav-btn {
+            padding: 9px 18px; border: 2px solid #1e3c72;
+            border-radius: 8px; background: #fff; color: #1e3c72;
+            cursor: pointer; font-weight: 700; font-size: .88rem;
+            transition: all .18s;
+        }
+        .nav-btn:hover { background: #eef1f6; }
+        .nav-btn.activo { background: #1e3c72; color: #fff; }
+        .nav-sep { border-left: 2px solid #e5e7eb; margin: 0 4px; }
+
+        .seccion { display: none; }
+        .seccion.visible { display: block; }
+
+        /* Tablas */
+        .tabla-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: .91rem; }
+        th { background: #1e3c72; color: #fff; padding: 11px 12px; text-align: left; white-space: nowrap; }
+        td { padding: 9px 12px; border-bottom: 1px solid #e5e7eb; }
+        tr:hover td { background: #f0f4ff; }
+
+        /* Badges */
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: .78rem; font-weight: 700; }
+        .b-verde  { background: #d1fae5; color: #065f46; }
+        .b-rojo   { background: #fee2e2; color: #991b1b; }
+        .b-azul   { background: #dbeafe; color: #1e40af; }
+        .b-gris   { background: #f3f4f6; color: #374151; }
+
+        /* Botones accion */
+        .btn-accion { padding: 5px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: .8rem; font-weight: 700; }
+        .btn-editar  { background: #fef3c7; color: #92400e; }
+        .btn-borrar  { background: #fee2e2; color: #991b1b; }
+        .btn-nota    { background: #dbeafe; color: #1e40af; }
+
+        /* Barra de herramientas */
+        .barra { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+        .barra input, .barra select {
+            padding: 8px 12px; border: 1.5px solid #d1d5db;
+            border-radius: 8px; font-size: .88rem;
+        }
+        .btn-nuevo { padding: 9px 20px; background: #059669; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .btn-nuevo:hover { background: #047857; }
+        .btn-buscar { padding: 9px 20px; background: #1e3c72; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .btn-exportar { padding: 9px 18px; background: #7c3aed; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
+
+        /* Mensajes */
+        .msg-ok  { color: #065f46; background: #d1fae5; padding: 10px 16px; border-radius: 8px; margin: 8px 0; display: none; }
+        .msg-err { color: #991b1b; background: #fee2e2; padding: 10px 16px; border-radius: 8px; margin: 8px 0; display: none; }
+        .spin    { color: #9ca3af; font-style: italic; margin: 10px 0; display: none; }
+        .sin-datos { color: #9ca3af; text-align: center; padding: 28px; }
+
+        /* Modal */
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 999; align-items: center; justify-content: center; }
+        .overlay.abierto { display: flex; }
+        .modal { background: #fff; border-radius: 14px; padding: 28px; width: 95%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+        .modal h3 { margin-bottom: 18px; font-size: 1.1rem; color: #1e3c72; }
+        .campo-modal { margin-bottom: 14px; }
+        .campo-modal label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 5px; }
+        .campo-modal input, .campo-modal select {
+            width: 100%; padding: 9px 12px;
+            border: 1.5px solid #d1d5db; border-radius: 8px; font-size: .9rem;
+        }
+        .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+        .btn-cancelar { padding: 9px 20px; background: #f3f4f6; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .btn-guardar  { padding: 9px 22px; background: #1e3c72; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
+
+        /* KPIs */
+        .kpis { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+        .kpi  { background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 10px; padding: 14px 22px; text-align: center; min-width: 120px; }
+        .kpi .n { font-size: 1.9rem; font-weight: 800; color: #1e3c72; }
+        .kpi .l { font-size: .8rem; color: #6b7280; }
+    </style>
 </head>
 <body data-rol="admin">
 
@@ -18,42 +97,774 @@
 
     <div class="contenido-panel">
 
-        <div class="modulo">
-            <h2>Bienvenido al panel de administracion</h2>
-            <p>Desde aqui el administrador gestiona los datos del sistema. Los modulos
-               de abajo son los puntos donde el <strong>Rol D</strong> y el <strong>Rol E</strong>
-               conectaran sus pantallas.</p>
-        </div>
+        <!-- Navegacion de modulos -->
+        <nav class="nav-modulos">
+            <strong style="align-self:center;color:#6b7280;font-size:.82rem;">ROL D:</strong>
+            <button class="nav-btn activo" onclick="irA('estudiantes',this)">Estudiantes</button>
+            <button class="nav-btn" onclick="irA('cursos',this)">Cursos</button>
+            <button class="nav-btn" onclick="irA('docentes',this)">Docentes</button>
+            <button class="nav-btn" onclick="irA('asignaciones',this)">Asignaciones</button>
+            <span class="nav-sep"></span>
+            <strong style="align-self:center;color:#6b7280;font-size:.82rem;">ROL E:</strong>
+            <button class="nav-btn" onclick="irA('notas',this)">Ingreso de notas</button>
+            <button class="nav-btn" onclick="irA('buscador',this)">Buscador</button>
+            <button class="nav-btn" onclick="irA('reportes',this)">Reportes</button>
+        </nav>
 
         <!-- ============================================================ -->
-        <!-- ROL D - Modulos CRUD (gestion de datos)                       -->
-        <!-- El backend ya existe en backend/estudiantes.php y             -->
-        <!-- backend/listar_programas.php. Monta aqui las pantallas.       -->
+        <!-- ROL D - ESTUDIANTES                                           -->
         <!-- ============================================================ -->
-        <div class="modulo">
-            <h2>Gestion de datos <span class="etiqueta-rol">ROL D</span></h2>
-            <p>CRUD de Estudiantes, Cursos, Docentes y Asignaciones.</p>
-            <div class="placeholder">
-                Espacio reservado para el Rol D.<br>
-                Endpoints listos: <code>backend/estudiantes.php</code> (listar / agregar / actualizar / eliminar),
-                <code>backend/listar_programas.php</code>.<br>
-                Ya existe una tabla de estudiantes funcional en <code>index tabla.html</code> que puedes integrar aqui.
+        <div class="modulo seccion visible" id="seccion-estudiantes">
+            <h2>Gestion de Estudiantes <span class="etiqueta-rol">ROL D</span></h2>
+            <div class="barra">
+                <button class="btn-nuevo" onclick="abrirModalEstudiante()">+ Nuevo estudiante</button>
+                <input id="filtroEst" placeholder="Buscar por nombre..." oninput="filtrarTabla('tbEst',this.value)" style="width:220px">
+            </div>
+            <div class="msg-ok" id="okEst"></div>
+            <div class="msg-err" id="errEst"></div>
+            <div class="spin" id="spinEst">Cargando...</div>
+            <div class="tabla-wrap">
+                <table><thead><tr>
+                    <th>ID</th><th>Identificacion</th><th>Nombres</th><th>Apellidos</th>
+                    <th>Email</th><th>Semestre</th><th>Programa</th><th>Acciones</th>
+                </tr></thead>
+                <tbody id="tbEst"><tr><td colspan="8" class="sin-datos">Cargando...</td></tr></tbody>
+                </table>
             </div>
         </div>
 
         <!-- ============================================================ -->
-        <!-- ROL E - Reportes (el admin tambien puede ver reportes)        -->
+        <!-- ROL D - CURSOS                                                -->
         <!-- ============================================================ -->
-        <div class="modulo">
-            <h2>Reportes academicos <span class="etiqueta-rol">ROL E</span></h2>
-            <p>Reportes exportables (constancias, listados, promedios). Vistas disponibles
-               en la BD: <code>vista_promedios</code>, <code>vista_historial_academico</code>,
-               <code>vista_cursos_por_docente</code>.</p>
-            <div class="placeholder">Espacio reservado para el Rol E.</div>
+        <div class="modulo seccion" id="seccion-cursos">
+            <h2>Gestion de Cursos <span class="etiqueta-rol">ROL D</span></h2>
+            <div class="barra">
+                <button class="btn-nuevo" onclick="abrirModalCurso()">+ Nuevo curso</button>
+                <input id="filtroCur" placeholder="Buscar curso..." oninput="filtrarTabla('tbCur',this.value)" style="width:220px">
+            </div>
+            <div class="msg-ok" id="okCur"></div>
+            <div class="msg-err" id="errCur"></div>
+            <div class="spin" id="spinCur">Cargando...</div>
+            <div class="tabla-wrap">
+                <table><thead><tr>
+                    <th>Codigo</th><th>Nombre</th><th>Programa</th>
+                    <th>Semestre</th><th>Creditos</th><th>Horas</th><th>Acciones</th>
+                </tr></thead>
+                <tbody id="tbCur"><tr><td colspan="7" class="sin-datos">Cargando...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
+        <!-- ============================================================ -->
+        <!-- ROL D - DOCENTES                                              -->
+        <!-- ============================================================ -->
+        <div class="modulo seccion" id="seccion-docentes">
+            <h2>Gestion de Docentes <span class="etiqueta-rol">ROL D</span></h2>
+            <div class="barra">
+                <button class="btn-nuevo" onclick="abrirModalDocente()">+ Nuevo docente</button>
+                <input id="filtroDoc" placeholder="Buscar docente..." oninput="filtrarTabla('tbDoc',this.value)" style="width:220px">
+            </div>
+            <div class="msg-ok" id="okDoc"></div>
+            <div class="msg-err" id="errDoc"></div>
+            <div class="spin" id="spinDoc">Cargando...</div>
+            <div class="tabla-wrap">
+                <table><thead><tr>
+                    <th>ID</th><th>Identificacion</th><th>Nombres</th><th>Apellidos</th>
+                    <th>Email</th><th>Especialidad</th><th>Acciones</th>
+                </tr></thead>
+                <tbody id="tbDoc"><tr><td colspan="7" class="sin-datos">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ROL D - ASIGNACIONES                                          -->
+        <!-- ============================================================ -->
+        <div class="modulo seccion" id="seccion-asignaciones">
+            <h2>Asignaciones Docente — Curso <span class="etiqueta-rol">ROL D</span></h2>
+            <div class="barra">
+                <button class="btn-nuevo" onclick="abrirModalAsignacion()">+ Nueva asignacion</button>
+                <label>Periodo:
+                    <select id="periodoAsig" onchange="cargarAsignaciones()">
+                        <option value="">Todos</option>
+                        <option value="2025-1">2025-1</option>
+                        <option value="2025-2" selected>2025-2</option>
+                        <option value="2026-1">2026-1</option>
+                    </select>
+                </label>
+            </div>
+            <div class="msg-ok" id="okAsig"></div>
+            <div class="msg-err" id="errAsig"></div>
+            <div class="spin" id="spinAsig">Cargando...</div>
+            <div class="tabla-wrap">
+                <table><thead><tr>
+                    <th>Periodo</th><th>Docente</th><th>Codigo</th><th>Materia</th><th>Programa</th><th>Acciones</th>
+                </tr></thead>
+                <tbody id="tbAsig"><tr><td colspan="6" class="sin-datos">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ROL E - INGRESO DE NOTAS                                      -->
+        <!-- ============================================================ -->
+        <div class="modulo seccion" id="seccion-notas">
+            <h2>Ingreso de Notas <span class="etiqueta-rol">ROL E</span></h2>
+            <div class="barra">
+                <label>Periodo:
+                    <select id="periodoNotas" onchange="cargarMatriculas()">
+                        <option value="2025-1">2025-1</option>
+                        <option value="2025-2" selected>2025-2</option>
+                        <option value="2026-1">2026-1</option>
+                    </select>
+                </label>
+                <input id="filtroNotas" placeholder="Buscar estudiante o materia..." oninput="filtrarTabla('tbNotas',this.value)" style="width:240px">
+            </div>
+            <div class="msg-ok" id="okNotas"></div>
+            <div class="msg-err" id="errNotas"></div>
+            <div class="spin" id="spinNotas">Cargando matriculas...</div>
+            <div class="tabla-wrap">
+                <table><thead><tr>
+                    <th>Identificacion</th><th>Estudiante</th><th>Materia</th>
+                    <th>Nota actual</th><th>Estado</th><th>Accion</th>
+                </tr></thead>
+                <tbody id="tbNotas"><tr><td colspan="6" class="sin-datos">Selecciona un periodo.</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ROL E - BUSCADOR                                              -->
+        <!-- ============================================================ -->
+        <div class="modulo seccion" id="seccion-buscador">
+            <h2>Buscador Academico <span class="etiqueta-rol">ROL E</span></h2>
+            <div class="barra">
+                <select id="fPrograma" style="width:200px"><option value="">Todos los programas</option></select>
+                <select id="fSemestre">
+                    <option value="">Todos los semestres</option>
+                    <option value="1">Semestre 1</option><option value="2">2</option>
+                    <option value="3">3</option><option value="4">4</option>
+                    <option value="5">5</option><option value="6">6</option>
+                    <option value="7">7</option><option value="8">8</option>
+                </select>
+                <input id="fMateria" placeholder="Materia o codigo..." style="width:170px">
+                <input id="fDocente" placeholder="Docente..." style="width:140px">
+                <input id="fNotaMin" placeholder="Nota min" type="number" min="0" max="5" step="0.1" style="width:90px">
+                <input id="fNotaMax" placeholder="Nota max" type="number" min="0" max="5" step="0.1" style="width:90px">
+                <select id="fEstado">
+                    <option value="">Todos los estados</option>
+                    <option value="Cursando">Cursando</option>
+                    <option value="Aprobada">Aprobada</option>
+                    <option value="Reprobada">Reprobada</option>
+                    <option value="Cancelada">Cancelada</option>
+                </select>
+                <button class="btn-buscar" onclick="ejecutarBusqueda()">Buscar</button>
+            </div>
+            <p id="totalBusqueda" style="color:#6b7280;font-size:.85rem;margin-bottom:10px;"></p>
+            <div class="tabla-wrap">
+                <table><thead><tr>
+                    <th>Estudiante</th><th>Materia</th><th>Programa</th>
+                    <th>Periodo</th><th>Nota</th><th>Estado</th><th>Docente</th>
+                </tr></thead>
+                <tbody id="tbBuscador"><tr><td colspan="7" class="sin-datos">Usa los filtros y presiona Buscar.</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ROL E - REPORTES                                              -->
+        <!-- ============================================================ -->
+        <div class="modulo seccion" id="seccion-reportes">
+            <h2>Reportes Exportables <span class="etiqueta-rol">ROL E</span></h2>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px;">
+                <button class="btn-exportar" onclick="exportarReporte('promedios')">
+                    ⬇ Exportar Promedios (CSV)
+                </button>
+                <button class="btn-exportar" onclick="exportarReporte('historial')">
+                    ⬇ Exportar Historial Completo (CSV)
+                </button>
+            </div>
+            <div id="vistaReporte">
+                <div class="kpis" id="kpisReporte"></div>
+                <div class="tabla-wrap">
+                    <table id="tablaReporte">
+                        <thead id="headReporte"></thead>
+                        <tbody id="bodyReporte">
+                            <tr><td class="sin-datos">Presiona un boton de exportar para previsualizar.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fin contenido-panel -->
+
+    <!-- ============================================================ -->
+    <!-- MODALES                                                       -->
+    <!-- ============================================================ -->
+
+    <!-- Modal Estudiante -->
+    <div class="overlay" id="modalEst">
+        <div class="modal">
+            <h3 id="tituloModalEst">Nuevo Estudiante</h3>
+            <input type="hidden" id="estId">
+            <div class="campo-modal"><label>No. Identificacion</label><input id="estIdent"></div>
+            <div class="campo-modal"><label>Nombres</label><input id="estNombres"></div>
+            <div class="campo-modal"><label>Apellidos</label><input id="estApellidos"></div>
+            <div class="campo-modal"><label>Email institucional</label><input id="estEmail" type="email"></div>
+            <div class="campo-modal"><label>Fecha nacimiento</label><input id="estFecha" type="date"></div>
+            <div class="campo-modal"><label>Programa</label>
+                <select id="estPrograma"></select>
+            </div>
+            <div class="campo-modal"><label>Semestre actual</label>
+                <input id="estSemestre" type="number" min="1" max="12">
+            </div>
+            <div class="modal-btns">
+                <button class="btn-cancelar" onclick="cerrarModal('modalEst')">Cancelar</button>
+                <button class="btn-guardar" onclick="guardarEstudiante()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Curso -->
+    <div class="overlay" id="modalCur">
+        <div class="modal">
+            <h3 id="tituloModalCur">Nuevo Curso</h3>
+            <input type="hidden" id="curId">
+            <div class="campo-modal"><label>Codigo</label><input id="curCodigo"></div>
+            <div class="campo-modal"><label>Nombre</label><input id="curNombre"></div>
+            <div class="campo-modal"><label>Programa</label><select id="curPrograma"></select></div>
+            <div class="campo-modal"><label>Semestre recomendado</label>
+                <input id="curSemestre" type="number" min="1" max="12">
+            </div>
+            <div class="campo-modal"><label>Creditos (1-6)</label>
+                <input id="curCreditos" type="number" min="1" max="6">
+            </div>
+            <div class="campo-modal"><label>Horas semanales (1-10)</label>
+                <input id="curHoras" type="number" min="1" max="10">
+            </div>
+            <div class="modal-btns">
+                <button class="btn-cancelar" onclick="cerrarModal('modalCur')">Cancelar</button>
+                <button class="btn-guardar" onclick="guardarCurso()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Docente -->
+    <div class="overlay" id="modalDoc">
+        <div class="modal">
+            <h3 id="tituloModalDoc">Nuevo Docente</h3>
+            <input type="hidden" id="docId">
+            <div class="campo-modal"><label>No. Identificacion</label><input id="docIdent"></div>
+            <div class="campo-modal"><label>Nombres</label><input id="docNombres"></div>
+            <div class="campo-modal"><label>Apellidos</label><input id="docApellidos"></div>
+            <div class="campo-modal"><label>Email institucional</label><input id="docEmail" type="email"></div>
+            <div class="campo-modal"><label>Especialidad</label><input id="docEspecialidad"></div>
+            <div class="modal-btns">
+                <button class="btn-cancelar" onclick="cerrarModal('modalDoc')">Cancelar</button>
+                <button class="btn-guardar" onclick="guardarDocente()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Asignacion -->
+    <div class="overlay" id="modalAsig">
+        <div class="modal">
+            <h3>Nueva Asignacion</h3>
+            <div class="campo-modal"><label>Docente</label><select id="asigDocente" style="width:100%"></select></div>
+            <div class="campo-modal"><label>Materia</label><select id="asigMateria" style="width:100%"></select></div>
+            <div class="campo-modal"><label>Periodo academico</label>
+                <select id="asigPeriodo">
+                    <option value="2025-1">2025-1</option>
+                    <option value="2025-2" selected>2025-2</option>
+                    <option value="2026-1">2026-1</option>
+                </select>
+            </div>
+            <div class="modal-btns">
+                <button class="btn-cancelar" onclick="cerrarModal('modalAsig')">Cancelar</button>
+                <button class="btn-guardar" onclick="guardarAsignacion()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nota -->
+    <div class="overlay" id="modalNota">
+        <div class="modal">
+            <h3>Ingresar Nota</h3>
+            <input type="hidden" id="notaIdMatricula">
+            <p id="notaDescripcion" style="color:#6b7280;margin-bottom:14px;font-size:.9rem;"></p>
+            <div class="campo-modal">
+                <label>Nota final (0.00 – 5.00)</label>
+                <input id="notaValor" type="number" min="0" max="5" step="0.01" placeholder="Ej: 3.75">
+            </div>
+            <p style="font-size:.82rem;color:#9ca3af;">≥ 3.00 = Aprobada &nbsp;|&nbsp; &lt; 3.00 = Reprobada</p>
+            <div class="modal-btns">
+                <button class="btn-cancelar" onclick="cerrarModal('modalNota')">Cancelar</button>
+                <button class="btn-guardar" onclick="guardarNota()">Guardar nota</button>
+            </div>
+        </div>
     </div>
 
     <script src="js/panel.js"></script>
+    <script>
+    // =====================================================================
+    // ROL D + ROL E — Panel Admin
+    // =====================================================================
+
+    let programas = [];   // cache de programas para los modales
+    let docentes  = [];   // cache de docentes
+    let cursos    = [];   // cache de cursos
+
+    // ---------- Navegacion ----------
+    function irA(id, btn) {
+        document.querySelectorAll('.seccion').forEach(s => s.classList.remove('visible'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
+        document.getElementById('seccion-' + id).classList.add('visible');
+        btn.classList.add('activo');
+        // Carga perezosa
+        const cargadores = {
+            estudiantes:  cargarEstudiantes,
+            cursos:       cargarCursos,
+            docentes:     cargarDocentes,
+            asignaciones: cargarAsignaciones,
+            notas:        cargarMatriculas,
+            buscador:     iniciarBuscador,
+            reportes:     () => {},
+        };
+        if (cargadores[id]) cargadores[id]();
+    }
+
+    // ---------- Filtro de tabla rapido ----------
+    function filtrarTabla(tbId, texto) {
+        const texto_ = texto.toLowerCase();
+        document.querySelectorAll('#' + tbId + ' tr').forEach(tr => {
+            tr.style.display = tr.textContent.toLowerCase().includes(texto_) ? '' : 'none';
+        });
+    }
+
+    // ---------- Modales ----------
+    function abrirModal(id)  { document.getElementById(id).classList.add('abierto'); }
+    function cerrarModal(id) { document.getElementById(id).classList.remove('abierto'); }
+
+    // =====================================================================
+    // ROL D - ESTUDIANTES
+    // =====================================================================
+    async function cargarEstudiantes() {
+        spin('spinEst'); limpiarCuerpo('tbEst', 8);
+        const data = await api('backend/estudiantes.php?accion=listar');
+        sinSpin('spinEst');
+        if (!data) return;
+        document.getElementById('tbEst').innerHTML = data.map(e => `
+            <tr>
+                <td>${e.id_estudiante}</td>
+                <td>${e.numero_identificacion}</td>
+                <td>${e.nombres}</td>
+                <td>${e.apellidos}</td>
+                <td>${e.email_institucional}</td>
+                <td>${e.semestre_actual}</td>
+                <td>${e.nombre_programa}</td>
+                <td>
+                    <button class="btn-accion btn-editar" onclick='editarEstudiante(${JSON.stringify(e)})'>Editar</button>
+                    <button class="btn-accion btn-borrar" onclick="eliminarEstudiante(${e.id_estudiante})">Eliminar</button>
+                </td>
+            </tr>`).join('') || `<tr><td colspan="8" class="sin-datos">Sin estudiantes.</td></tr>`;
+    }
+
+    async function abrirModalEstudiante() {
+        await cargarProgramasSelect('estPrograma');
+        document.getElementById('tituloModalEst').textContent = 'Nuevo Estudiante';
+        ['estId','estIdent','estNombres','estApellidos','estEmail','estFecha','estSemestre']
+            .forEach(id => { document.getElementById(id).value = ''; });
+        abrirModal('modalEst');
+    }
+
+    async function editarEstudiante(e) {
+        await cargarProgramasSelect('estPrograma');
+        document.getElementById('tituloModalEst').textContent = 'Editar Estudiante';
+        document.getElementById('estId').value        = e.id_estudiante;
+        document.getElementById('estIdent').value     = e.numero_identificacion;
+        document.getElementById('estNombres').value   = e.nombres;
+        document.getElementById('estApellidos').value = e.apellidos;
+        document.getElementById('estEmail').value     = e.email_institucional;
+        document.getElementById('estSemestre').value  = e.semestre_actual;
+        document.getElementById('estPrograma').value  = e.id_programa;
+        abrirModal('modalEst');
+    }
+
+    async function guardarEstudiante() {
+        const id = document.getElementById('estId').value;
+        const cuerpo = {
+            numero_identificacion: document.getElementById('estIdent').value,
+            nombres:               document.getElementById('estNombres').value,
+            apellidos:             document.getElementById('estApellidos').value,
+            email_institucional:   document.getElementById('estEmail').value,
+            fecha_nacimiento:      document.getElementById('estFecha').value,
+            id_programa:           document.getElementById('estPrograma').value,
+            semestre_actual:       document.getElementById('estSemestre').value,
+        };
+        const url    = id ? 'backend/estudiantes.php?accion=actualizar' : 'backend/estudiantes.php?accion=agregar';
+        if (id) cuerpo.id_estudiante = id;
+        const res = await apiPost(url, cuerpo);
+        if (res?.exito) { cerrarModal('modalEst'); mostrar('okEst','Guardado correctamente.'); cargarEstudiantes(); }
+        else mostrar('errEst', res?.error || 'Error al guardar.');
+    }
+
+    async function eliminarEstudiante(id) {
+        if (!confirm('¿Eliminar este estudiante?')) return;
+        const res = await api(`backend/estudiantes.php?accion=eliminar&id=${id}`, 'DELETE');
+        if (res?.exito) { mostrar('okEst','Eliminado.'); cargarEstudiantes(); }
+        else mostrar('errEst', res?.error || 'Error al eliminar.');
+    }
+
+    // =====================================================================
+    // ROL D - CURSOS
+    // =====================================================================
+    async function cargarCursos() {
+        spin('spinCur'); limpiarCuerpo('tbCur', 7);
+        const data = await api('backend/crud.php?tabla=cursos&accion=listar');
+        sinSpin('spinCur');
+        if (!data) return;
+        cursos = data;
+        document.getElementById('tbCur').innerHTML = data.map(c => `
+            <tr>
+                <td>${c.codigo_materia}</td>
+                <td>${c.nombre_materia}</td>
+                <td>${c.nombre_programa}</td>
+                <td>${c.semestre_recomendado}</td>
+                <td>${c.creditos}</td>
+                <td>${c.horas_semanales}</td>
+                <td>
+                    <button class="btn-accion btn-editar" onclick='editarCurso(${JSON.stringify(c)})'>Editar</button>
+                    <button class="btn-accion btn-borrar" onclick="eliminarCurso(${c.id_materia})">Eliminar</button>
+                </td>
+            </tr>`).join('') || `<tr><td colspan="7" class="sin-datos">Sin cursos.</td></tr>`;
+    }
+
+    async function abrirModalCurso() {
+        await cargarProgramasSelect('curPrograma');
+        document.getElementById('tituloModalCur').textContent = 'Nuevo Curso';
+        ['curId','curCodigo','curNombre','curSemestre','curCreditos','curHoras']
+            .forEach(id => { document.getElementById(id).value = ''; });
+        abrirModal('modalCur');
+    }
+
+    async function editarCurso(c) {
+        await cargarProgramasSelect('curPrograma');
+        document.getElementById('tituloModalCur').textContent = 'Editar Curso';
+        document.getElementById('curId').value       = c.id_materia;
+        document.getElementById('curCodigo').value   = c.codigo_materia;
+        document.getElementById('curNombre').value   = c.nombre_materia;
+        document.getElementById('curPrograma').value = c.id_programa;
+        document.getElementById('curSemestre').value = c.semestre_recomendado;
+        document.getElementById('curCreditos').value = c.creditos;
+        document.getElementById('curHoras').value    = c.horas_semanales;
+        abrirModal('modalCur');
+    }
+
+    async function guardarCurso() {
+        const id = document.getElementById('curId').value;
+        const cuerpo = {
+            codigo_materia:       document.getElementById('curCodigo').value,
+            nombre_materia:       document.getElementById('curNombre').value,
+            id_programa:          document.getElementById('curPrograma').value,
+            semestre_recomendado: document.getElementById('curSemestre').value,
+            creditos:             document.getElementById('curCreditos').value,
+            horas_semanales:      document.getElementById('curHoras').value,
+        };
+        if (id) cuerpo.id_materia = id;
+        const accion = id ? 'actualizar' : 'agregar';
+        const res = await apiPost(`backend/crud.php?tabla=cursos&accion=${accion}`, cuerpo);
+        if (res?.exito) { cerrarModal('modalCur'); mostrar('okCur','Guardado.'); cargarCursos(); }
+        else mostrar('errCur', res?.error || 'Error al guardar.');
+    }
+
+    async function eliminarCurso(id) {
+        if (!confirm('¿Eliminar este curso? (no se puede si hay inscritos)')) return;
+        const res = await api(`backend/crud.php?tabla=cursos&accion=eliminar&id=${id}`, 'DELETE');
+        if (res?.exito) { mostrar('okCur','Eliminado.'); cargarCursos(); }
+        else mostrar('errCur', res?.error || 'No se pudo eliminar.');
+    }
+
+    // =====================================================================
+    // ROL D - DOCENTES
+    // =====================================================================
+    async function cargarDocentes() {
+        spin('spinDoc'); limpiarCuerpo('tbDoc', 7);
+        const data = await api('backend/crud.php?tabla=docentes&accion=listar');
+        sinSpin('spinDoc');
+        if (!data) return;
+        docentes = data;
+        document.getElementById('tbDoc').innerHTML = data.map(d => `
+            <tr>
+                <td>${d.id_profesor}</td>
+                <td>${d.numero_identificacion}</td>
+                <td>${d.nombres}</td>
+                <td>${d.apellidos}</td>
+                <td>${d.email_institucional}</td>
+                <td>${d.especialidad || '—'}</td>
+                <td>
+                    <button class="btn-accion btn-editar" onclick='editarDocente(${JSON.stringify(d)})'>Editar</button>
+                    <button class="btn-accion btn-borrar" onclick="eliminarDocente(${d.id_profesor})">Eliminar</button>
+                </td>
+            </tr>`).join('') || `<tr><td colspan="7" class="sin-datos">Sin docentes.</td></tr>`;
+    }
+
+    function abrirModalDocente() {
+        document.getElementById('tituloModalDoc').textContent = 'Nuevo Docente';
+        ['docId','docIdent','docNombres','docApellidos','docEmail','docEspecialidad']
+            .forEach(id => { document.getElementById(id).value = ''; });
+        abrirModal('modalDoc');
+    }
+
+    function editarDocente(d) {
+        document.getElementById('tituloModalDoc').textContent = 'Editar Docente';
+        document.getElementById('docId').value           = d.id_profesor;
+        document.getElementById('docIdent').value        = d.numero_identificacion;
+        document.getElementById('docNombres').value      = d.nombres;
+        document.getElementById('docApellidos').value    = d.apellidos;
+        document.getElementById('docEmail').value        = d.email_institucional;
+        document.getElementById('docEspecialidad').value = d.especialidad || '';
+        abrirModal('modalDoc');
+    }
+
+    async function guardarDocente() {
+        const id = document.getElementById('docId').value;
+        const cuerpo = {
+            numero_identificacion: document.getElementById('docIdent').value,
+            nombres:               document.getElementById('docNombres').value,
+            apellidos:             document.getElementById('docApellidos').value,
+            email_institucional:   document.getElementById('docEmail').value,
+            especialidad:          document.getElementById('docEspecialidad').value,
+        };
+        if (id) cuerpo.id_profesor = id;
+        const accion = id ? 'actualizar' : 'agregar';
+        const res = await apiPost(`backend/crud.php?tabla=docentes&accion=${accion}`, cuerpo);
+        if (res?.exito) { cerrarModal('modalDoc'); mostrar('okDoc','Guardado.'); cargarDocentes(); }
+        else mostrar('errDoc', res?.error || 'Error al guardar.');
+    }
+
+    async function eliminarDocente(id) {
+        if (!confirm('¿Eliminar este docente?')) return;
+        const res = await api(`backend/crud.php?tabla=docentes&accion=eliminar&id=${id}`, 'DELETE');
+        if (res?.exito) { mostrar('okDoc','Eliminado.'); cargarDocentes(); }
+        else mostrar('errDoc', res?.error || 'Error.');
+    }
+
+    // =====================================================================
+    // ROL D - ASIGNACIONES
+    // =====================================================================
+    async function cargarAsignaciones() {
+        spin('spinAsig'); limpiarCuerpo('tbAsig', 6);
+        const periodo = document.getElementById('periodoAsig').value;
+        const url = 'backend/crud.php?tabla=asignaciones&accion=listar' + (periodo ? '&periodo=' + periodo : '');
+        const data = await api(url);
+        sinSpin('spinAsig');
+        if (!data) return;
+        document.getElementById('tbAsig').innerHTML = data.map(a => `
+            <tr>
+                <td>${a.periodo_academico}</td>
+                <td>${a.docente}</td>
+                <td>${a.codigo_materia}</td>
+                <td>${a.nombre_materia}</td>
+                <td>${a.nombre_programa}</td>
+                <td><button class="btn-accion btn-borrar" onclick="eliminarAsignacion(${a.id_asignacion})">Eliminar</button></td>
+            </tr>`).join('') || `<tr><td colspan="6" class="sin-datos">Sin asignaciones.</td></tr>`;
+    }
+
+    async function abrirModalAsignacion() {
+        // Cargar docentes y cursos en los selects
+        if (!docentes.length) await cargarDocentes();
+        if (!cursos.length) await cargarCursos();
+        document.getElementById('asigDocente').innerHTML =
+            docentes.map(d => `<option value="${d.id_profesor}">${d.nombres} ${d.apellidos}</option>`).join('');
+        document.getElementById('asigMateria').innerHTML =
+            cursos.map(c => `<option value="${c.id_materia}">${c.codigo_materia} — ${c.nombre_materia}</option>`).join('');
+        abrirModal('modalAsig');
+    }
+
+    async function guardarAsignacion() {
+        const res = await apiPost('backend/crud.php?tabla=asignaciones&accion=agregar', {
+            id_profesor:       document.getElementById('asigDocente').value,
+            id_materia:        document.getElementById('asigMateria').value,
+            periodo_academico: document.getElementById('asigPeriodo').value,
+        });
+        if (res?.exito) { cerrarModal('modalAsig'); mostrar('okAsig','Asignacion creada.'); cargarAsignaciones(); }
+        else mostrar('errAsig', res?.error || 'Error al asignar.');
+    }
+
+    async function eliminarAsignacion(id) {
+        if (!confirm('¿Eliminar esta asignacion?')) return;
+        const res = await api(`backend/crud.php?tabla=asignaciones&accion=eliminar&id=${id}`, 'DELETE');
+        if (res?.exito) { mostrar('okAsig','Eliminado.'); cargarAsignaciones(); }
+        else mostrar('errAsig', 'Error al eliminar.');
+    }
+
+    // =====================================================================
+    // ROL E - INGRESO DE NOTAS
+    // =====================================================================
+    async function cargarMatriculas() {
+        spin('spinNotas'); limpiarCuerpo('tbNotas', 6);
+        const periodo = document.getElementById('periodoNotas').value;
+        const data = await api(`backend/academico.php?accion=listar_matriculas&periodo=${periodo}`);
+        sinSpin('spinNotas');
+        if (!data) return;
+        document.getElementById('tbNotas').innerHTML = data.map(m => {
+            const nota   = m.nota_final !== null ? parseFloat(m.nota_final).toFixed(2) : '—';
+            const badge  = badgeEstado(m.estado_matricula);
+            return `<tr>
+                <td>${m.numero_identificacion}</td>
+                <td>${m.estudiante}</td>
+                <td>${m.codigo_materia} — ${m.nombre_materia}</td>
+                <td><strong>${nota}</strong></td>
+                <td><span class="badge ${badge.cls}">${badge.txt}</span></td>
+                <td><button class="btn-accion btn-nota"
+                    onclick="abrirModalNota(${m.id_matricula},'${m.estudiante}','${m.nombre_materia}',${m.nota_final ?? 'null'})">
+                    Ingresar nota
+                </button></td>
+            </tr>`;
+        }).join('') || `<tr><td colspan="6" class="sin-datos">No hay matriculas en este periodo.</td></tr>`;
+    }
+
+    function abrirModalNota(idMatricula, estudiante, materia, notaActual) {
+        document.getElementById('notaIdMatricula').value = idMatricula;
+        document.getElementById('notaDescripcion').textContent = `${estudiante} — ${materia}`;
+        document.getElementById('notaValor').value = notaActual !== null ? notaActual : '';
+        abrirModal('modalNota');
+    }
+
+    async function guardarNota() {
+        const res = await apiPost('backend/academico.php?accion=ingresar_nota', {
+            id_matricula: document.getElementById('notaIdMatricula').value,
+            nota_final:   document.getElementById('notaValor').value,
+        });
+        if (res?.exito) { cerrarModal('modalNota'); mostrar('okNotas', `Nota guardada. Estado: ${res.estado}`); cargarMatriculas(); }
+        else mostrar('errNotas', res?.error || 'Error al guardar nota.');
+    }
+
+    // =====================================================================
+    // ROL E - BUSCADOR
+    // =====================================================================
+    async function iniciarBuscador() {
+        const data = await api('backend/academico.php?accion=listar_programas_bd');
+        if (data) {
+            const sel = document.getElementById('fPrograma');
+            sel.innerHTML = '<option value="">Todos los programas</option>' +
+                data.map(p => `<option value="${p.id_programa}">${p.nombre_programa}</option>`).join('');
+        }
+    }
+
+    async function ejecutarBusqueda() {
+        const params = new URLSearchParams({
+            accion:    'buscar',
+            programa:  document.getElementById('fPrograma').value,
+            semestre:  document.getElementById('fSemestre').value,
+            materia:   document.getElementById('fMateria').value,
+            docente:   document.getElementById('fDocente').value,
+            nota_min:  document.getElementById('fNotaMin').value,
+            nota_max:  document.getElementById('fNotaMax').value,
+            estado:    document.getElementById('fEstado').value,
+        });
+        const data = await api('backend/academico.php?' + params);
+        if (!data) return;
+        document.getElementById('totalBusqueda').textContent = `Se encontraron ${data.length} registros.`;
+        document.getElementById('tbBuscador').innerHTML = data.length ? data.map(r => {
+            const badge = badgeEstado(r.estado_matricula);
+            const nota  = r.nota_final !== null ? parseFloat(r.nota_final).toFixed(2) : '—';
+            return `<tr>
+                <td>${r.estudiante}</td>
+                <td>${r.codigo_materia} — ${r.nombre_materia}</td>
+                <td>${r.nombre_programa}</td>
+                <td>${r.periodo_academico}</td>
+                <td><strong>${nota}</strong></td>
+                <td><span class="badge ${badge.cls}">${badge.txt}</span></td>
+                <td>${r.docente}</td>
+            </tr>`;
+        }).join('') : `<tr><td colspan="7" class="sin-datos">No se encontraron resultados.</td></tr>`;
+    }
+
+    // =====================================================================
+    // ROL E - REPORTES (exportar CSV)
+    // =====================================================================
+    async function exportarReporte(tipo) {
+        const accion = tipo === 'promedios' ? 'reporte_promedios' : 'reporte_historial';
+        const data   = await api(`backend/academico.php?accion=${accion}`);
+        if (!data || !data.length) return;
+
+        // Previsualizar en tabla
+        const cols = Object.keys(data[0]);
+        document.getElementById('headReporte').innerHTML =
+            '<tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr>';
+        document.getElementById('bodyReporte').innerHTML = data.map(r =>
+            '<tr>' + cols.map(c => `<td>${r[c] ?? '—'}</td>`).join('') + '</tr>'
+        ).join('');
+
+        // Generar CSV y descargar
+        const csv = [
+            cols.join(','),
+            ...data.map(r => cols.map(c => `"${String(r[c] ?? '').replace(/"/g,'""')}"`).join(','))
+        ].join('\n');
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = `reporte_${tipo}_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // =====================================================================
+    // HELPERS COMUNES
+    // =====================================================================
+    async function api(url, method = 'GET') {
+        try {
+            const r = await fetch(url, { method });
+            return await r.json();
+        } catch(e) { return null; }
+    }
+
+    async function apiPost(url, data) {
+        try {
+            const r = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return await r.json();
+        } catch(e) { return null; }
+    }
+
+    function spin(id)    { document.getElementById(id).style.display = 'block'; }
+    function sinSpin(id) { document.getElementById(id).style.display = 'none'; }
+
+    function limpiarCuerpo(id, cols) {
+        document.getElementById(id).innerHTML =
+            `<tr><td colspan="${cols}" class="sin-datos">Cargando...</td></tr>`;
+    }
+
+    function mostrar(id, texto) {
+        const el = document.getElementById(id);
+        el.textContent = texto;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 4000);
+    }
+
+    function badgeEstado(e) {
+        const m = { Aprobada:{cls:'b-verde',txt:'Aprobada'}, Reprobada:{cls:'b-rojo',txt:'Reprobada'},
+                    Cursando:{cls:'b-azul',txt:'Cursando'}, Cancelada:{cls:'b-gris',txt:'Cancelada'} };
+        return m[e] || { cls:'b-gris', txt:e };
+    }
+
+    async function cargarProgramasSelect(selectId) {
+        if (!programas.length) {
+            const data = await api('backend/listar_programas.php');
+            programas  = data?.data || [];
+        }
+        document.getElementById(selectId).innerHTML =
+            programas.map(p => `<option value="${p.id_programa}">${p.nombre_programa}</option>`).join('');
+    }
+
+    // Iniciar con la primera seccion
+    cargarEstudiantes();
+    </script>
 </body>
 </html>
